@@ -122,8 +122,24 @@ function isTriangle(a, b, c) {
  *   { top:20, left:20, width: 20, height: 20 }    =>  false
  *
  */
-function doRectanglesOverlap(/* rect1, rect2 */) {
-  throw new Error('Not implemented');
+const getCoordinates = ({
+  top, left, width, height,
+}) => {
+  const coords = [];
+  for (let i = top; i < top + height; i += 1) {
+    for (let j = left; j < left + width; j += 1) {
+      coords.push([i, j].join(':'));
+    }
+  }
+
+  return new Set(coords);
+};
+
+function doRectanglesOverlap(rect1, rect2) {
+  const coords1 = getCoordinates(rect1);
+  const coords2 = getCoordinates(rect2);
+  const intersection = [...coords1].filter((i) => coords2.has(i));
+  return intersection.length > 0;
 }
 
 /**
@@ -152,8 +168,11 @@ function doRectanglesOverlap(/* rect1, rect2 */) {
  *   { center: { x:0, y:0 }, radius:10 },  { x:10, y:10 }   => false
  *
  */
-function isInsideCircle(/* circle, point */) {
-  throw new Error('Not implemented');
+function isInsideCircle(
+  { center: { x: cx, y: cy }, radius },
+  { x: px, y: py },
+) {
+  return Math.sqrt(Math.abs(px - cx) ** 2 + Math.abs(py - cy) ** 2) < radius;
 }
 
 /**
@@ -327,8 +346,18 @@ function getDigitalRoot(num) {
  *   '{)' = false
  *   '{[(<{[]}>)]}' = true
  */
-function isBracketsBalanced(/* str */) {
-  throw new Error('Not implemented');
+function isBracketsBalanced(str) {
+  if (str % 2) return false;
+  if (!str.length) return true;
+
+  let workStr = str;
+  const regex = new RegExp(/({})|(\[\])|(<>)|(\(\))/, 'g');
+  for (let i = 0; i < str.length / 2; i += 1) {
+    workStr = workStr.replace(regex, '');
+    if (!workStr.length) return true;
+  }
+
+  return false;
 }
 
 /**
@@ -405,8 +434,22 @@ function getCommonDirectoryPath(paths) {
  *                         [ 6 ]]
  *
  */
-function getMatrixProduct(/* m1, m2 */) {
-  throw new Error('Not implemented');
+function getMatrixProduct(m1, m2) {
+  const outHeight = m1.length;
+  const outWidth = m2[0].length;
+  const res = new Array(outHeight)
+    .fill([])
+    .map(() => new Array(outWidth).fill(0));
+
+  for (let i = 0; i < outHeight; i += 1) {
+    for (let j = 0; j < outWidth; j += 1) {
+      for (let k = 0; k < m2.length; k += 1) {
+        res[i][j] += m1[i][k] * m2[k][j];
+      }
+    }
+  }
+
+  return res;
 }
 
 /**
